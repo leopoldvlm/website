@@ -1,0 +1,14 @@
+{% extends './layout.html' %}
+
+{% block title %}Log into notes{% endblock title %}
+
+{% block main %}
+    <form action="/notes/login" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Login">
+    </form>
+    {% if error %}
+        <h1>Error : {{ error }}</h1>
+    {% endif %}
+{% endblock main %}
