@@ -21,8 +21,10 @@ from notes import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('notes/', views.index),
-    path('notes/user', views.user),
+    path('notes/me', views.user),
     path('notes/logout', views.logout),
+    path('notes/login', views.login),
+    path('notes/register', views.register),
     re_path(r'^api/notes/$', views.notes_list),
     re_path(r'^api/notes/([0-9])$', views.notes_detail),
 ]
