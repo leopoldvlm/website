@@ -2,24 +2,40 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http.request import HttpRequest
 from django.db.utils import IntegrityError
+from django.forms import ValidationError
+
+from .forms import LoginUserForm
+from .utils import LoginError, AuthentificationError
 
 
-def auth(request: HttpRequest) -> bool:
+def auth(request: HttpRequest) -> ValidationError | AuthentificationError | LoginError | bool:
     """
-    Attempts to authenticate a user with username and password.
-    Returns True if user could be authenticated or already was, False otherwise.
+    Attempts to authenticate a user with username and password.\n
+    Returns True if user could be authenticated or already was.\n
+    Raises ValidationError if the form is not valid.\n
+    Raises AuthentificationError if user could not be authentificated.\n
+    Raises LoginError if user could not be logged in.
     """
+    if request.user.is_authenticated:
+        return True
 
-    user = authenticate(username=request.POST['username'], password=request.POST['password'])
-    if user is not None :
-        try:
-            login(request, user)
-            return True
-        except Exception :
-            return False
+    form = LoginUserForm(request.POST)
+
+    # tests form integrity
+    if not form.is_valid():
+        raise ValidationError
     
-    return False
-
+    # attempts to authenticate the user
+    # form.username does not work idk why :(
+    user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    if user is None :
+        raise AuthentificationError()
+    
+    try:
+        login(request, user)
+        return True
+    except Exception :
+        raise LoginError
 
 
 
