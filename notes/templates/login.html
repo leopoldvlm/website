@@ -2,7 +2,7 @@
 
 {% block title %}Log into notes{% endblock title %}
 
-{% block main %}
+{% block body %}
     <form action="/notes/login" method="post">
         {% csrf_token %}
         {{ form }}
@@ -11,4 +11,4 @@
     {% if error %}
         <h1>Error : {{ error }}</h1>
     {% endif %}
-{% endblock main %}
+{% endblock body %}
