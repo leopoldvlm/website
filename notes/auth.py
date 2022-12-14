@@ -8,7 +8,7 @@ from .forms import LoginUserForm
 from .utils import LoginError, AuthentificationError
 
 
-def auth(request: HttpRequest) -> ValidationError | AuthentificationError | LoginError | bool:
+def auth(request: HttpRequest):
     """
     Attempts to authenticate a user with username and password.\n
     Returns True if user could be authenticated or already was.\n
@@ -17,7 +17,7 @@ def auth(request: HttpRequest) -> ValidationError | AuthentificationError | Logi
     Raises LoginError if user could not be logged in.
     """
     if request.user.is_authenticated:
-        return True
+        return
 
     form = LoginUserForm(request.POST)
 
@@ -29,11 +29,10 @@ def auth(request: HttpRequest) -> ValidationError | AuthentificationError | Logi
     # form.username does not work idk why :(
     user = authenticate(username=request.POST['username'], password=request.POST['password'])
     if user is None :
-        raise AuthentificationError()
+        raise AuthentificationError
     
     try:
         login(request, user)
-        return True
     except Exception :
         raise LoginError
 
