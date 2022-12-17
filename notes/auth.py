@@ -38,15 +38,24 @@ def auth(request: HttpRequest):
 
 
 
-def create_notes_user(request: HttpRequest) -> bool:
+def register_user(request: HttpRequest):
     """
     Attempts to create a user with specified fields.
     Returns True if user was successfully created, False otherwise.
     """
+    if request.user.is_authenticated:
+        return
 
-    try:
-        user = User.objects.create_user(username = request.POST['username'], password = request.POST['password'])
-    except IntegrityError:
-        return False
+    form = LoginUserForm(request.POST)
+    if not form.is_valid():
+        raise ValidationError
 
-    return user is not None
+    User.objects.create_user(
+        username =request.POST['username'],
+        email = request.POST['email'],
+        password = request.POST['password'],
+        first_name = request.POST['first_name'],
+        last_name = request.POST['last_name']
+    )
+    
+    
