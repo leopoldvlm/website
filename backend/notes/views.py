@@ -93,3 +93,9 @@ def viewlogout(request: HttpRequest):
 @login_required
 def welcome(request: HttpRequest):
     return HttpResponse("Welcome to notes! :)")
+
+
+# /notes/app
+@login_required
+def app(request: HttpRequest):
+    return render(request, 'notes/app.html')
