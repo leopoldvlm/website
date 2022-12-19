@@ -10,9 +10,12 @@ from .serializers import NoteSerializer
 @api_view(['GET','POST'])
 def notes_list(request: HttpRequest):
 
+    if not request.user.is_authenticated:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
     # GET method = list of all notes FROM THE USER
     if request.method == 'GET':
-        userid = 0 if not request.user.is_authenticated else request.user.id
+        userid = request.user.id
         data = Note.objects.filter(author=userid)
         serializer = NoteSerializer(data, context={'request': request}, many=True)
         return Response(serializer.data)
