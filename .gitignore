@@ -1,7 +1,4 @@
 **/__pycache__/
 venv/
-**/.env
-
-# ignoring notes app for now
-
-notes/
+**/.env*
+.vscode/

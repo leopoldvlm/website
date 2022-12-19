@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'notes'
 ]
 
 MIDDLEWARE = [
@@ -92,6 +93,23 @@ DATABASES = {
         'PORT': env.get_value('DB_PORT'),
     }
 }
+
+
+# Secure stuff
+# https://docs.djangoproject.com/en/4.1/topics/security/
+
+SECURE_SSL_REDIRECT = False
+
+SESSION_COOKIE_SECURE = False
+
+CSRF_COOKIE_SECURE = False
+
+
+# Cookies and sessions and auth and stuff
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+LOGIN_URL = "/notes/login/"
 
 
 # Password validation

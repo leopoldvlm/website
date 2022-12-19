@@ -1,0 +1,8 @@
+{% extends './layout.html' %}
+
+{% block title %}{{ user }} : your page{% endblock title %}
+
+{% block body %}
+    <h1>welcome to your homepage {{ user }}</h1>
+    <a href="/notes/logout/">logout!</a>
+{% endblock body %}

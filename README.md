@@ -21,11 +21,12 @@ nothing :)
 first why would you want to do that to yourself?  
 but if still you want for whatever reason there you go:
 
-1. have python and node ready
+1. have python (with pip) and node (with npm) ready
 2. clone that repo however you like it
 
     ```console
     git clone git@github.com:leopoldvlm/website.git
+    cd website
     ```
 
 3. create a virtual environment
@@ -35,16 +36,18 @@ but if still you want for whatever reason there you go:
     source ./venv/Scripts/activate
     ```
 
-4. install those packages
+4. install those packages (for both frontend and backend)
 
     ```console
     pip install -r requirements.txt
+    cd frontend
     npm install
     ```
 
-5. create the greatewebsite/.env file matching the .env.example file and your setup, then migrate the db
+5. create the backend/greatewebsite/.env file matching the example below and your setup, then migrate the db
 
     ```console
+    cd backend
     python3 manage.py makemigrations
     python3 manage.py migrate
     ```
@@ -52,7 +55,10 @@ but if still you want for whatever reason there you go:
 6. run the server and suffer
 
     ```console
+    cd backend
     python3 manage.py runserver
+    cd ../frontend
+    npm run
     ```
 
 ## example of .env file
@@ -65,4 +71,5 @@ DB_USER=some_user
 DB_PASSWORD=some_password
 DB_HOST=localhost
 DB_PORT=5432
+# you don't need most of this if you run it with a sqlite db
 ```
