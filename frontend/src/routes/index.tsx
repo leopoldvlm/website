@@ -7,6 +7,7 @@ interface NoteState {
   title: string;
   emoji: string;
   content: string;
+  id?: number
 }
 
 export default component$(() => {
@@ -18,7 +19,7 @@ export default component$(() => {
     {
       id: 5,
       title: "DON'T FORGET",
-      emoji: "🙅‍♂️",
+      emoji: "",
       content: "Go to the moon on thursday",
     },
     {id: 6, title: "", emoji: "💢", content: "Unnamed notes are the worst."},
@@ -28,26 +29,19 @@ export default component$(() => {
     title: "",
     emoji: "",
     content: "",
+    id: undefined
   });
 
-  const handleTitleChange$ = $((title: string) => {
-    Object.assign(state, {title: title});
-  });
-
-  const handleEmojiChange$ = $((emoji: string) => {
-    Object.assign(state, {emoji: emoji});
-  });
-
-  const handleContentChange$ = $((content: string) => {
-    Object.assign(state, {content: content});
-  });
+  const stateChange$ = $((obj: Object) => {
+    Object.assign(state, obj);
+  })
 
   return (
     <section class="flex flex-1 flex-row min-h-full">
       <Sidebar notes={notes} />
       <div class="flex flex-col w-3/4">
-        <NoteHeader title$={handleTitleChange$} emoji$={handleEmojiChange$} />
-        <NoteText content$={handleContentChange$}/>
+        <NoteHeader change$={stateChange$} />
+        <NoteText change$={stateChange$}/>
       </div>
       <button onClick$={() => console.log(state)}>Log note as json!</button>
     </section>

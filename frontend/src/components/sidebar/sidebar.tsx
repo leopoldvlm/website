@@ -18,7 +18,7 @@ export default component$((props: SideBarProps) => {
       <ul class="before:content-['Notes:'] before:underline marker:content-['→'] marker:ba p-4">
         {notes.map((note) => (
           <li key={note.id} class="mx-5 my-2.5 break-words">
-            {note.emoji +
+            {(note.emoji === "" ? "❓" : note.emoji) +
               " " +
               (note.title === "" ? "Unnamed note" : note.title)}
           </li>
