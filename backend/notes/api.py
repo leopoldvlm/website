@@ -1,27 +1,30 @@
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.request import Request
 
 from .models import Note
 from .serializers import NoteSerializer
 
 # /api/notes/
 @api_view(['GET','POST'])
-def notes_list(request: HttpRequest):
+def notes_list(request: Request):
 
     if not request.user.is_authenticated:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+    else :
+        userid = request.user.id
 
     # GET method = list of all notes FROM THE USER
     if request.method == 'GET':
-        userid = request.user.id
         data = Note.objects.filter(author=userid)
         serializer = NoteSerializer(data, context={'request': request}, many=True)
         return Response(serializer.data)
 
     # POST method = create a note
     elif request.method == 'POST':
+        request.data['author'] = userid
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
