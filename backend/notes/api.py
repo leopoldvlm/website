@@ -11,27 +11,37 @@ from .serializers import NoteSerializer
 @api_view(['GET','POST'])
 def notes_list(request: Request):
 
-    if not request.user.is_authenticated:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
-    else :
-        userid = request.user.id
+    # if not request.user.is_authenticated:
+    #     return Response(status=status.HTTP_401_UNAUTHORIZED)
+    # else :
+    #     userid = request.user.id
 
     # GET method = list of all notes FROM THE USER
+    # if request.method == 'GET':
+    #     data = Note.objects.filter(author=userid)
+    #     serializer = NoteSerializer(data, context={'request': request}, many=True)
+    #     return Response(serializer.data)
+
+    # GET method except you get all notes
     if request.method == 'GET':
-        data = Note.objects.filter(author=userid)
+        data = Note.objects.all()
         serializer = NoteSerializer(data, context={'request': request}, many=True)
         return Response(serializer.data)
 
     # POST method = create a note
     elif request.method == 'POST':
-        request.data['author'] = userid
+        # request.data['author'] = userid
+        request.data['author'] = 1
         serializer = NoteSerializer(data=request.data)
+        print(serializer.is_valid())
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     # other methods or incorrect POST = bad request
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 # /api/notes/:id

@@ -111,6 +111,10 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 LOGIN_URL = "/notes/login/"
 
+CORS_ORIGIN_WHITELIST = [
+     'http://localhost:5173'
+]
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
