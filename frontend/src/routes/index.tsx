@@ -3,7 +3,7 @@ import type {DocumentHead} from "@builder.io/qwik-city";
 import Sidebar from "../components/sidebar/sidebar";
 import {NoteHeader, NoteText} from "../components/note-comp/note-comp";
 
-interface NoteState {
+export interface NoteState {
   title: string;
   emoji: string;
   body: string;
@@ -36,15 +36,11 @@ export default component$(() => {
   ];
 
   const state = useStore<NoteState>({
-    title: "",
-    emoji: "",
-    body: "",
+    title: "Test note when coming on the page",
+    emoji: "🥼",
+    body: "This is the body of the note to test if I can do something.",
     id: undefined,
     notes: baseNotes,
-  });
-
-  const stateChange$ = $((obj: Object) => {
-    Object.assign(state, obj);
   });
 
   const fetchNotes$ = $(
@@ -89,7 +85,6 @@ export default component$(() => {
       referrerPolicy: "no-referrer",
     };
     const opt = {...options, body: JSON.stringify(body)};
-    console.log(JSON.stringify(opt, null, 2));
 
     const resp = await fetch(url, opt);
 
@@ -100,6 +95,10 @@ export default component$(() => {
     }
   });
 
+  const updateInputContent$ = $((input: HTMLElement, content: string) => {
+    input.textContent = content;
+  });
+
   return (
     <section class="flex flex-1 flex-row min-h-full">
       <Sidebar
@@ -108,8 +107,8 @@ export default component$(() => {
         create$={createEmptyNote$}
       />
       <div class="flex flex-col w-3/4">
-        <NoteHeader change$={stateChange$} />
-        <NoteText change$={stateChange$} />
+        <NoteHeader currentNote={state} updateNote$={updateInputContent$} />
+        <NoteText currentNote={state} updateNote$={updateInputContent$} />
       </div>
     </section>
   );
