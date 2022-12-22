@@ -7,7 +7,7 @@ interface Note {
   emoji: string;
   create?: Date;
   author?: number;
-  body: string;
+  content: string;
 }
 
 interface SideBarProps {
@@ -23,7 +23,7 @@ export default component$((props: SideBarProps) => {
     <aside class="flex flex-col w-1/4 border border-black">
       <AccountButton />
       <button
-        onClick$={async () => props.create$("http://localhost:8000/api/notes/")}
+        onClick$={async () => props.create$("http://localhost:3000/notes")}
         class="w-3/4 mx-auto flex flex-row place-content-center justify-center text-3xl group"
       >
         <i class="fa-solid fa-plus mr-2 grid place-items-center group-hover:rotate-90"></i>
