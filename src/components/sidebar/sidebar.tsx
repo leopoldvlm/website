@@ -54,7 +54,7 @@ export default component$((props: SideBarProps) => {
                   key={note.id}
                   class="mx-5 my-2.5 break-words" // opacity-0 ease-in duration-100 transition-opacity
                   id={note.id?.toString()}
-                  onClick$={(event) => console.log((event.target as HTMLElement).getAttribute('q:key'))}
+                  onClick$={(event) => props.id = Number((event.target as HTMLElement).getAttribute('q:key'))}
                 >
                   {(note.emoji === '' ? '❓' : note.emoji) +
                     ' ' +

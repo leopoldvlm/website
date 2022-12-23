@@ -7,7 +7,7 @@ export interface NoteState {
   title: string;
   emoji: string;
   content: string;
-  id?: number;
+  id: number;
 }
 
 export interface Note {
@@ -22,7 +22,7 @@ export default component$(() => {
     title: 'Test note when coming on the page',
     emoji: '🥼',
     content: 'This is the body of the note to test if I can do something.',
-    id: undefined,
+    id: 0,
   });
 
   const updateInputContent$ = $((input: HTMLElement, content: string) => {
