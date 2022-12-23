@@ -1,8 +1,11 @@
 import type {RequestHandler} from '@builder.io/qwik-city';
 import {Prisma, PrismaClient, User} from '@prisma/client';
-import bcryptjs from 'bcryptjs'
+import bcryptjs from 'bcryptjs';
 
-export const onPost: RequestHandler<Partial<User> | {error: string}> = async ({request, response}) => {
+export const onPost: RequestHandler<Partial<User> | {error: string}> = async ({
+  request,
+  response,
+}) => {
   const prisma = new PrismaClient();
   const {login, password, name} = await request.json();
   try {
@@ -16,15 +19,16 @@ export const onPost: RequestHandler<Partial<User> | {error: string}> = async ({r
         login: true,
         name: true,
         password: false,
-        id: false
-    }});
+        id: false,
+      },
+    });
     return user;
   } catch (error) {
     let message;
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       message = `This ${error.meta?.target} is already in use. Please pick another.`;
     } else {
-      message = "Error, please try again."
+      message = 'Error, please try again.';
     }
     response.error(400);
     return {error: message};

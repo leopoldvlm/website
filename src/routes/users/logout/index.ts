@@ -6,8 +6,8 @@ export const onPost: RequestHandler<
   const token = cookie.get('token');
   if (!token) {
     response.error(400);
-    return {error: 'You were not logged in.'}
+    return {error: 'You were not logged in.'};
   }
-  cookie.delete('token');
+  cookie.delete('token', {path: '/'});
   return {message: 'Successfully logged off.'};
 };

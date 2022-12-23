@@ -14,7 +14,7 @@ export const onGet: RequestHandler<
   const prisma = new PrismaClient();
   const notes = await prisma.note.findMany({
     where: {
-      userId: id
+      userId: id,
     },
     select: {
       id: true,
@@ -32,7 +32,33 @@ export const onGet: RequestHandler<
   return notes;
 };
 
-export const onPost: RequestHandler<any> = async () => {
-  // create a note.
-  return {message: 'this will create a note and return it.'};
+export const onPost: RequestHandler<Partial<Note> | {error: string}> = async ({
+  request,
+  response,
+  cookie,
+}) => {
+  const id = verifyUser(cookie);
+  if (!id) {
+    response.error(401);
+    return {error: 'Unauthorized'};
+  }
+  const {title, emoji, content} = await request.json();
+
+  const prisma = new PrismaClient();
+  const note = await prisma.note.create({
+    data: {
+      title: title,
+      emoji: emoji,
+      content: content,
+      userId: id,
+    },
+    select: {
+      title: true,
+      emoji: true,
+      content: true,
+      userId: false,
+    },
+  });
+  response.status = 201;
+  return note;
 };
