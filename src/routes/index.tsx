@@ -1,4 +1,4 @@
-import {component$, $, useStore} from '@builder.io/qwik';
+import {component$, $, useStore, useTask$} from '@builder.io/qwik';
 import type {DocumentHead} from '@builder.io/qwik-city';
 import Sidebar from '../components/sidebar/sidebar';
 import {NoteHeader, NoteText} from '../components/note-comp/note-comp';
@@ -18,7 +18,7 @@ export interface Note {
 }
 
 export default component$(() => {
-  const state = useStore<NoteState>({
+  const store = useStore<NoteState>({
     title: 'Test note when coming on the page',
     emoji: '🥼',
     content: 'This is the body of the note to test if I can do something.',
@@ -29,16 +29,21 @@ export default component$(() => {
     input.textContent = content;
   });
 
+  useTask$(({ track }) => {
+    const id = track(() => store.id);
+    console.log("clicked and id changed: " + id);
+  });
+  
+
   return (
     <>
       <section class="flex flex-1 flex-row min-h-full">
-        <Sidebar id={state.id}/>
+        <Sidebar state={store} />
         <div class="flex flex-col w-3/4">
-          <NoteHeader currentNote={state} updateNote$={updateInputContent$} />
-          <NoteText currentNote={state} updateNote$={updateInputContent$} />
+          <NoteHeader store={store} updateNote$={updateInputContent$} />
+          <NoteText store={store} updateNote$={updateInputContent$} />
         </div>
       </section>
-      <button onClick$={() => {}}>THIS IS FOR TESTING</button>
     </>
   );
 });

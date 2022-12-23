@@ -42,6 +42,7 @@ export const onPost: RequestHandler<
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
+      path: "/"
     });
     return {message: 'Successfully logged in.'};
   } catch (error) {

@@ -1,17 +1,9 @@
 import {component$, useResource$, Resource, useStore} from '@builder.io/qwik';
 import AccountButton from '../account-button/account-button';
-
-interface Note {
-  id: number;
-  title: string;
-  emoji: string;
-  create?: Date;
-  author?: number;
-  content: string;
-}
+import { NoteState as NoteStore, Note } from '../../routes/index';
 
 interface SideBarProps {
-  id: number;
+  state: NoteStore;
 }
 
 export default component$((props: SideBarProps) => {
@@ -52,9 +44,9 @@ export default component$((props: SideBarProps) => {
               {notes.map((note) => (
                 <li
                   key={note.id}
-                  class="mx-5 my-2.5 break-words" // opacity-0 ease-in duration-100 transition-opacity
+                  class="mx-5 my-2.5 break-words w-fit hover:cursor-pointer" // opacity-0 ease-in duration-100 transition-opacity
                   id={note.id?.toString()}
-                  onClick$={(event) => props.id = Number((event.target as HTMLElement).getAttribute('q:key'))}
+                  onClick$={(event) => props.state.id = Number((event.target as HTMLElement).getAttribute('q:key'))}
                 >
                   {(note.emoji === '' ? '❓' : note.emoji) +
                     ' ' +
@@ -66,7 +58,7 @@ export default component$((props: SideBarProps) => {
         }}
       />
       </ul>
-      <button onClick$={() => state.clicked++} class="group">
+      <button onClick$={() => state.clicked = state.clicked + 1} class="group">
         Refresh data
         <i class="fa-solid fa-arrow-rotate-right ml-2 group-hover:animate-spin duration-[0ms]"></i>
       </button>

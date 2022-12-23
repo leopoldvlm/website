@@ -2,7 +2,7 @@ import {component$, PropFunction} from "@builder.io/qwik";
 import { NoteState } from "../../routes/index";
 
 interface NoteProps {
-  currentNote: NoteState;
+  store: NoteState;
   updateNote$: PropFunction<(input: HTMLElement, content: string) => void>;
 }
 
@@ -23,7 +23,7 @@ export const NoteHeader = component$((props: NoteProps) => {
   return (
     <header class=" h-20 border border-sky-600 flex flex-col place-content-evenly p-1">
       <input
-        onChange$={(event) => Object.assign(props.currentNote, {title: event.target.value})}
+        onChange$={(event) => Object.assign(props.store, {title: event.target.value})}
         type="text"
         maxLength={240}
         placeholder="Note title"
@@ -31,7 +31,7 @@ export const NoteHeader = component$((props: NoteProps) => {
       />
       <div class="w-fit flex flex-row">
         <input
-          onChange$={(event) => Object.assign(props.currentNote, {emoji: event.target.value})}
+          onChange$={(event) => Object.assign(props.store, {emoji: event.target.value})}
           type="text"
           maxLength={2}
           placeholder={emojis[Math.floor(Math.random() * emojis.length)]}
@@ -55,7 +55,7 @@ export const NoteText = component$((props: NoteProps) => {
     <>
       <main class="flex-1 flex">
         <textarea
-          onChange$={(event) => Object.assign(props.currentNote, {content: event.target.value})}
+          onChange$={(event) => Object.assign(props.store, {content: event.target.value})}
           class=" flex-1 resize-none focus:outline-none text-2xl p-6"
           placeholder="Note to self..."
         ></textarea>
