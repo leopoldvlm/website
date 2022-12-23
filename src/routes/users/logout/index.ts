@@ -1,9 +1,13 @@
 import type {RequestHandler} from '@builder.io/qwik-city';
-import {PrismaClient} from '@prisma/client';
 
-export const onPost: RequestHandler<any> = async ({cookie}) => {
-  // register a user.
-  // sets token in thing.
-
-  return {message: "This will log you out."}
+export const onPost: RequestHandler<
+  {message: string} | {error: string}
+> = async ({response, cookie}) => {
+  const token = cookie.get('token');
+  if (!token) {
+    response.error(400);
+    return {error: 'You were not logged in.'}
+  }
+  cookie.delete('token');
+  return {message: 'Successfully logged off.'};
 };
