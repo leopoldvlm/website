@@ -20,8 +20,11 @@ export const onGet: RequestHandler<Partial<Note> | {error: string}> = async ({
 
   if (note?.userId !== id) {
     response.error(401);
+    await prisma.$disconnect();
     return {error: 'Unauthorized (you do not own this note)'};
   }
+
+  await prisma.$disconnect();
   return note;
 };
 
@@ -42,6 +45,7 @@ export const onPut: RequestHandler<Partial<Note> | {error: string}> = async ({
   const note = await getNote(prisma, noteId);
   if (note?.userId !== id) {
     response.error(401);
+    await prisma.$disconnect();
     return {error: 'Unauthorized (you do not own this note)'};
   }
 
@@ -70,9 +74,11 @@ export const onPut: RequestHandler<Partial<Note> | {error: string}> = async ({
         id: true,
       },
     });
+    await prisma.$disconnect();
     return updatedNote;
   } catch (error) {
     response.error(500);
+    await prisma.$disconnect();
     return {error: 'Could not update the note.'};
   }
 };
@@ -91,6 +97,7 @@ export const onDelete: RequestHandler<
   const note = await getNote(prisma, noteId);
   if (note?.userId !== id) {
     response.error(401);
+    await prisma.$disconnect();
     return {error: 'Unauthorized (you do not own this note)'};
   }
 
@@ -101,6 +108,7 @@ export const onDelete: RequestHandler<
   });
   if (!deletedNote) {
     response.error(500);
+    await prisma.$disconnect();
     return {error: 'Could not delete the note.'};
   }
   return {message: 'Note deleted.'};

@@ -42,7 +42,7 @@ export const onPost: RequestHandler<Partial<Note> | {error: string}> = async ({
     response.error(401);
     return {error: 'Unauthorized'};
   }
-  const {title, emoji, content} = await request.json();
+  const {title = '', emoji = '', content = ''} = await request.json();
 
   const prisma = new PrismaClient();
   const note = await prisma.note.create({
@@ -60,5 +60,7 @@ export const onPost: RequestHandler<Partial<Note> | {error: string}> = async ({
     },
   });
   response.status = 201;
+
+  await prisma.$disconnect();
   return note;
 };

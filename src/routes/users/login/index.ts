@@ -11,6 +11,7 @@ export const onPost: RequestHandler<
   if (token) {
     response.error(400);
     return {error: 'Already logged in.'};
+    // returns a 200 status code! weirdchamp
   }
 
   const prisma = new PrismaClient();
@@ -24,10 +25,12 @@ export const onPost: RequestHandler<
 
   if (!user) {
     response.error(400);
+    await prisma.$disconnect();
     return {error: 'This user does not exist.'};
   }
   if (!(await bcryptjs.compare(password, user?.password))) {
     response.error(400);
+    await prisma.$disconnect();
     return {error: 'Incorrect password.'};
   }
 
@@ -44,9 +47,11 @@ export const onPost: RequestHandler<
       sameSite: 'strict',
       path: '/',
     });
+    await prisma.$disconnect();
     return {message: 'Successfully logged in.'};
   } catch (error) {
     response.error(500);
+    await prisma.$disconnect();
     return {error: 'could not log you in.'};
   }
 };

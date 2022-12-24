@@ -1,47 +1,48 @@
-import {component$, $, useStore, useTask$} from '@builder.io/qwik';
+import {component$, useStore, useTask$} from '@builder.io/qwik';
 import type {DocumentHead} from '@builder.io/qwik-city';
 import Sidebar from '../components/sidebar/sidebar';
 import {NoteHeader, NoteText} from '../components/note-comp/note-comp';
 
-export interface NoteState {
-  title: string;
-  emoji: string;
-  content: string;
-  id: number;
-}
-
 export interface Note {
-  id: number;
+  id?: number;
   title: string;
   emoji: string;
   content: string;
 }
 
 export default component$(() => {
-  const store = useStore<NoteState>({
-    title: 'Test note when coming on the page',
-    emoji: '🥼',
-    content: 'This is the body of the note to test if I can do something.',
-    id: 0,
+  const store = useStore<Note>({
+    title: '',
+    emoji: '',
+    content: '',
+    id: undefined,
   });
 
-  const updateInputContent$ = $((input: HTMLElement, content: string) => {
-    input.textContent = content;
-  });
-
-  useTask$(({ track }) => {
+  useTask$(({track}) => {
     const id = track(() => store.id);
-    console.log("clicked and id changed: " + id);
+    if (id === undefined) {
+      return;
+    }
+    fetch(`/notes/${id}`, {
+      method: 'GET',
+    })
+      .then((res) =>
+        res.json().then((data: Partial<Note>) => {
+          store.title = data.title ?? '';
+          store.emoji = data.emoji ?? '';
+          store.content = data.content ?? '';
+        })
+      )
+      .catch((error) => console.log(error));
   });
-  
 
   return (
     <>
       <section class="flex flex-1 flex-row min-h-full">
-        <Sidebar state={store} />
+        <Sidebar store={store} />
         <div class="flex flex-col w-3/4">
-          <NoteHeader store={store} updateNote$={updateInputContent$} />
-          <NoteText store={store} updateNote$={updateInputContent$} />
+          <NoteHeader store={store} />
+          <NoteText store={store} />
         </div>
       </section>
     </>

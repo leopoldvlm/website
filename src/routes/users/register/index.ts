@@ -22,6 +22,7 @@ export const onPost: RequestHandler<Partial<User> | {error: string}> = async ({
         id: false,
       },
     });
+    await prisma.$disconnect();
     return user;
   } catch (error) {
     let message;
@@ -31,6 +32,7 @@ export const onPost: RequestHandler<Partial<User> | {error: string}> = async ({
       message = 'Error, please try again.';
     }
     response.error(400);
+    await prisma.$disconnect();
     return {error: message};
   }
 };
