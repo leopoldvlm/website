@@ -1,6 +1,7 @@
 import type {RequestHandler} from '@builder.io/qwik-city';
-import {PrismaClient, Note} from '@prisma/client';
-import verifyUser from '../../account/accounts';
+import {Note} from '@prisma/client';
+import verifyUser from '../../utils/accounts';
+import {prisma} from '~/utils/database';
 
 export const onGet: RequestHandler<
   Array<Partial<Note>> | {error: string}
@@ -11,7 +12,6 @@ export const onGet: RequestHandler<
     return {error: 'Unauthorized.'};
   }
 
-  const prisma = new PrismaClient();
   const notes = await prisma.note.findMany({
     where: {
       userId: id,
@@ -25,9 +25,6 @@ export const onGet: RequestHandler<
       userId: false,
     },
   });
-
-  // close the database connection
-  prisma.$disconnect();
 
   return notes;
 };
@@ -44,7 +41,6 @@ export const onPost: RequestHandler<Partial<Note> | {error: string}> = async ({
   }
   const {title = '', emoji = '', content = ''} = await request.json();
 
-  const prisma = new PrismaClient();
   const note = await prisma.note.create({
     data: {
       title: title,
@@ -61,6 +57,5 @@ export const onPost: RequestHandler<Partial<Note> | {error: string}> = async ({
   });
   response.status = 201;
 
-  await prisma.$disconnect();
   return note;
 };

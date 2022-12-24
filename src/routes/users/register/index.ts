@@ -1,12 +1,12 @@
 import type {RequestHandler} from '@builder.io/qwik-city';
-import {Prisma, PrismaClient, User} from '@prisma/client';
+import {Prisma, User} from '@prisma/client';
 import bcryptjs from 'bcryptjs';
+import { prisma } from '~/utils/database';
 
 export const onPost: RequestHandler<Partial<User> | {error: string}> = async ({
   request,
   response,
 }) => {
-  const prisma = new PrismaClient();
   const {login, password, name} = await request.json();
   try {
     const user = await prisma.user.create({
@@ -22,7 +22,6 @@ export const onPost: RequestHandler<Partial<User> | {error: string}> = async ({
         id: false,
       },
     });
-    await prisma.$disconnect();
     return user;
   } catch (error) {
     let message;
@@ -32,7 +31,6 @@ export const onPost: RequestHandler<Partial<User> | {error: string}> = async ({
       message = 'Error, please try again.';
     }
     response.error(400);
-    await prisma.$disconnect();
     return {error: message};
   }
 };

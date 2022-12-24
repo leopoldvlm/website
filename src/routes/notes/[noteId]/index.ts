@@ -1,6 +1,7 @@
 import type {RequestHandler} from '@builder.io/qwik-city';
 import {PrismaClient, Note} from '@prisma/client';
-import verifyUser from '../../../account/accounts';
+import verifyUser from '../../../utils/accounts';
+import {prisma} from '~/utils/database';
 
 export const onGet: RequestHandler<Partial<Note> | {error: string}> = async ({
   response,
@@ -14,17 +15,14 @@ export const onGet: RequestHandler<Partial<Note> | {error: string}> = async ({
   }
   const noteId: number = Number(params.noteId);
 
-  const prisma = new PrismaClient();
   // get note, then check its userId.
   const note = await getNote(prisma, noteId);
 
   if (note?.userId !== id) {
     response.error(401);
-    await prisma.$disconnect();
     return {error: 'Unauthorized (you do not own this note)'};
   }
 
-  await prisma.$disconnect();
   return note;
 };
 
@@ -40,12 +38,10 @@ export const onPut: RequestHandler<Partial<Note> | {error: string}> = async ({
     return {error: 'Unauthorized'};
   }
 
-  const prisma = new PrismaClient();
   const noteId: number = Number(params.noteId);
   const note = await getNote(prisma, noteId);
   if (note?.userId !== id) {
     response.error(401);
-    await prisma.$disconnect();
     return {error: 'Unauthorized (you do not own this note)'};
   }
 
@@ -74,11 +70,9 @@ export const onPut: RequestHandler<Partial<Note> | {error: string}> = async ({
         id: true,
       },
     });
-    await prisma.$disconnect();
     return updatedNote;
   } catch (error) {
     response.error(500);
-    await prisma.$disconnect();
     return {error: 'Could not update the note.'};
   }
 };
@@ -92,12 +86,10 @@ export const onDelete: RequestHandler<
     return {error: 'Unauthorized'};
   }
 
-  const prisma = new PrismaClient();
   const noteId: number = Number(params.noteId);
   const note = await getNote(prisma, noteId);
   if (note?.userId !== id) {
     response.error(401);
-    await prisma.$disconnect();
     return {error: 'Unauthorized (you do not own this note)'};
   }
 
@@ -108,7 +100,6 @@ export const onDelete: RequestHandler<
   });
   if (!deletedNote) {
     response.error(500);
-    await prisma.$disconnect();
     return {error: 'Could not delete the note.'};
   }
   return {message: 'Note deleted.'};

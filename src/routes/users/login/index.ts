@@ -1,8 +1,8 @@
 import type {RequestHandler} from '@builder.io/qwik-city';
-import {PrismaClient} from '@prisma/client';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
+import { prisma } from '~/utils/database';
 
 export const onPost: RequestHandler<
   {error: string} | {message: string}
@@ -14,8 +14,6 @@ export const onPost: RequestHandler<
     // returns a 200 status code! weirdchamp
   }
 
-  const prisma = new PrismaClient();
-
   const {login, password} = await request.json();
   const user = await prisma.user.findUnique({
     where: {
@@ -25,12 +23,10 @@ export const onPost: RequestHandler<
 
   if (!user) {
     response.error(400);
-    await prisma.$disconnect();
     return {error: 'This user does not exist.'};
   }
   if (!(await bcryptjs.compare(password, user?.password))) {
     response.error(400);
-    await prisma.$disconnect();
     return {error: 'Incorrect password.'};
   }
 
@@ -47,11 +43,9 @@ export const onPost: RequestHandler<
       sameSite: 'strict',
       path: '/',
     });
-    await prisma.$disconnect();
     return {message: 'Successfully logged in.'};
   } catch (error) {
     response.error(500);
-    await prisma.$disconnect();
     return {error: 'could not log you in.'};
   }
 };
