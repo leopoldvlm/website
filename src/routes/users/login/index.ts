@@ -1,18 +1,13 @@
-import type {RequestHandler} from '@builder.io/qwik-city';
+import {RequestHandler} from '@builder.io/qwik-city';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
-import { prisma } from '~/utils/database';
+import {prisma} from '~/utils/database';
 
 export const onPost: RequestHandler<
-  {error: string} | {message: string}
+  {error: string} | {message: string; user: string}
 > = async ({request, response, cookie}) => {
-  const token = cookie.get('token');
-  if (token) {
-    response.error(400);
-    return {error: 'Already logged in.'};
-    // returns a 200 status code! weirdchamp
-  }
+  
 
   const {login, password} = await request.json();
   const user = await prisma.user.findUnique({
@@ -22,12 +17,17 @@ export const onPost: RequestHandler<
   });
 
   if (!user) {
-    response.error(400);
+    response.status = 400;
     return {error: 'This user does not exist.'};
   }
   if (!(await bcryptjs.compare(password, user?.password))) {
-    response.error(400);
+    response.status = 400;
     return {error: 'Incorrect password.'};
+  }
+
+  const token = cookie.get('token');
+  if (token) {
+    return {message: 'Already logged in.', user: user.login};
   }
 
   dotenv.config();
@@ -43,9 +43,9 @@ export const onPost: RequestHandler<
       sameSite: 'strict',
       path: '/',
     });
-    return {message: 'Successfully logged in.'};
+    return {message: 'Successfully logged in.', user: user.login};
   } catch (error) {
-    response.error(500);
+    response.status = 500;
     return {error: 'could not log you in.'};
   }
 };

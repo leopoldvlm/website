@@ -5,7 +5,7 @@ export const onPost: RequestHandler<
 > = async ({response, cookie}) => {
   const token = cookie.get('token');
   if (!token) {
-    response.error(400);
+    response.status = 400;
     return {error: 'You were not logged in.'};
   }
   cookie.delete('token', {path: '/'});

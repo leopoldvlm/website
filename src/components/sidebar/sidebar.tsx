@@ -34,10 +34,11 @@ export default component$((props: SideBarProps) => {
             body: JSON.stringify({title: 'New note', emoji: '', content: ''}),
           }).then((resp) => {
             if (resp.status !== 201) throw Error;
-            else resp.json().then((data: Note) => {
-              props.store.id = data.id;
-              store.clicked = store.clicked + 1;
-            })
+            else
+              resp.json().then((data: Note) => {
+                props.store.id = data.id;
+                store.clicked = store.clicked + 1;
+              });
           })
         }
         class="w-3/4 mx-auto flex flex-row place-content-center justify-center text-3xl group"
@@ -75,7 +76,9 @@ export default component$((props: SideBarProps) => {
                       ))
                     }
                   >
-                    {(['',' ','  ', undefined].includes(note.emoji) ? '❓' : note.emoji) +
+                    {(['', ' ', '  ', undefined].includes(note.emoji)
+                      ? '❓'
+                      : note.emoji) +
                       ' ' +
                       (note.title === '' ? 'Unnamed note' : note.title)}
                   </li>
